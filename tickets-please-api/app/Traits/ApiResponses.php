@@ -4,16 +4,28 @@ namespace App\Traits;
 
 trait ApiResponses
 {
-    protected function ok($message)
-    {
-        return $this->success($message,200);
-    }
-    protected function success($message,$statusCode = 200)
+    protected function success($data, string $message, int $statusCode = 200)
     {
         return response()->json([
-            "message" => $message,
-            "status"=> $statusCode,
-        ],$statusCode);
+            'status' => 'success',
+            'message' => $message,
+            'data' => $data,
+        ], $statusCode);
     }
+
+    protected function error(string $message, int $statusCode = 400)
+    {
+        return response()->json([
+            'status' => 'error',
+            'message' => $message,
+        ], $statusCode);
+    }
+
+    protected function ok($data = null, string $message = 'OK')
+    {
+        return $this->success($data, $message, 200);
+    }
+
+
 }
 ?>
