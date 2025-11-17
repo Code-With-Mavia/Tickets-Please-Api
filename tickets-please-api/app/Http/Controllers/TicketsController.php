@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Http\Requests\ApiCreateTicketRequest;
+use App\Http\Requests\ApiUpdateTicketRequest;
 use App\Models\Tickets;
 use App\Traits\ApiResponses;
 class TicketsController extends Controller
@@ -17,6 +18,17 @@ class TicketsController extends Controller
     {
         $ticket = Tickets::create($request->validated());
         return $this->ok($ticket, "Ticket created successfully");
+    }
+
+    public function updateTicket(ApiUpdateTicketRequest $request, $id)
+    {
+        $ticket = Tickets::find($id);
+        if(!$ticket)
+        {
+            return $this->error("Ticket not found");
+        }
+        $ticket->update($request->validated());
+        return $this->ok($ticket,"Ticket updated successfully");
     }
 
     public function deleteTicket($id)
