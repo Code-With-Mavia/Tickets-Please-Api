@@ -20,8 +20,6 @@ use App\Http\Controllers\UserController;
 // });
 
 
-
-
 Route::post('login', [AuthController::class,'login']);
 Route::post('registration', [AuthController::class,'registration']);
 
