@@ -23,7 +23,7 @@ class ApiUpdateTicketRequest extends FormRequest
     {
         return [
             "title"=> "sometimes|max:128",
-            "description"=> "sometimes|max:255 ",
+            "description"=> "sometimes|max:255",
             "status"=> "sometimes|in:S,A,B,C",
         ];
     }
