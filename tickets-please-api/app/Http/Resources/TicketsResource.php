@@ -18,11 +18,14 @@ class TicketsResource extends JsonResource
             "id"=> $this->id,
             "attributes"=>[
                 "title"=>$this->title,
-                "description"=>$this->description,
+                // "description"=>$this->description,
                 "status"=>$this->status,
-                "created_at"=>$this->created_at,
-                "updated_at"=>$this->updated_at,
+                "created_at"=>$this->created_at->toIso8601String(),
+                "updated_at"=>$this->updated_at->toIso8601String(),
             ],
+            $this->mergeWhen($request->routeIs('tickets.show'), [
+                "description" => $this->description,
+            ]),
             "relationships"=>[
                 "id"=>$this->user->id,
                 "name"=>$this->user->name,

@@ -32,7 +32,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         //GET api/tickets/stats
         Route::get('/stats', [TicketsController::class,'ticketStats']);
          //GET api/tickets/{user_id}
-        Route::get('/{id}', [TicketsController::class,'getUserTickets']);
+        Route::get('/{id}', [TicketsController::class,'getUserTickets'])->name('tickets.show');
         // POST api/tickets/
         Route::post('/', [TicketsController::class,'createTicket']);
         // PUT api/tickets/{id}
