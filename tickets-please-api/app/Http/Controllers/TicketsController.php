@@ -5,10 +5,8 @@ use App\Http\Requests\ApiCreateTicketRequest;
 use App\Http\Requests\ApiUpdateTicketRequest;
 use App\Http\Resources\TicketsResource;
 use App\Models\Tickets;
-
 use App\Traits\ApiResponses;
-use Illuminate\Support\Facades\Auth;
-use PHPUnit\Framework\Attributes\Ticket;
+
 
 class TicketsController extends Controller
 {
