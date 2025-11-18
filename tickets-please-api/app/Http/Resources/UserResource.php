@@ -19,9 +19,13 @@ class UserResource extends JsonResource
             "attributes"=>[
                 "name"=> $this->name,
                 "email"=> $this->email,
+                // "created_at"=>$this->created_at->toIso8601String(),
+                // "updated_at"=>$this->updated_at->toIso8601String(),
+            ],
+            $this->mergeWhen($request->routeIs('users.show'), [
                 "created_at"=>$this->created_at->toIso8601String(),
                 "updated_at"=>$this->updated_at->toIso8601String(),
-            ],
+            ]),
             "relationships"=>[
                 "Total Tickets"=>$this->tickets->count(),
             ]

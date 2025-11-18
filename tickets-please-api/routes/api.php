@@ -48,7 +48,7 @@ Route::middleware(['jwt.auth'])->group(function () {
         // GET api/users/
         Route::get('/',[UserController::class,'index']);
         // GET api/users/{id}
-        Route::get('/{id}', [UserController::class,'getSingleUser']);
+        Route::get('/{id}', [UserController::class,'getSingleUser'])->name('users.show');
         // GET api/users/stats/{id}
         Route::get('/stats/{id}', [UserController::class,'ticketUserStats']);
         // PUT api/users/
