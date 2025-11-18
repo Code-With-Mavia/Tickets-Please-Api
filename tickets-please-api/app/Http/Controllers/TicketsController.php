@@ -3,24 +3,31 @@
 namespace App\Http\Controllers;
 use App\Http\Requests\ApiCreateTicketRequest;
 use App\Http\Requests\ApiUpdateTicketRequest;
+use App\Http\Resources\TicketsResource;
 use App\Models\Tickets;
 
 use App\Traits\ApiResponses;
+use Illuminate\Support\Facades\Auth;
+use PHPUnit\Framework\Attributes\Ticket;
+
 class TicketsController extends Controller
 {
     use ApiResponses;
+    // show all tickets
     public function index()
     {
-        $ticket = Tickets::select("id","user_id","title","description","status")->paginate(2500);
+        $ticket = TicketsResource::collection(Tickets::latest()->paginate(500));
         return $ticket;
     }
 
+    //create tickets
     public function createTicket(ApiCreateTicketRequest $request)
     {
         $ticket = Tickets::create($request->validated());
-        return $this->ok($ticket, "Ticket created successfully");
+        return $this->ok(new TicketsResource($ticket), "Ticket created successfully");
     }
 
+    //update tickets
     public function updateTicket(ApiUpdateTicketRequest $request, $id)
     {
         $ticket = Tickets::find($id);
@@ -29,7 +36,7 @@ class TicketsController extends Controller
             return $this->error("Ticket not found");
         }
         $ticket->update($request->validated());
-        return $this->ok($ticket,"Ticket updated successfully");
+        return $this->ok(new TicketsResource($ticket),"Ticket updated successfully");
     }
 
     public function deleteTicket($id)
@@ -45,12 +52,21 @@ class TicketsController extends Controller
     }
 
     //filter tickets via user id how many tickets he has
-    public function getticketsbyUser($id)
+    public function getUserTickets($id)
     {
-        $tickets = Tickets::select('id','user_id','title','description','status')->where('user_id', $id);
-        return $this->ok("Tickets = ".$tickets->count(),'Tickets fetched');
+        $tickets = Tickets::where('user_id', $id)->select('id','user_id','title','description','status','created_at','updated_at')->get();
 
+        return $this->ok(TicketsResource::collection($tickets),'Tickets fetched');
     }
+
+
+    // get tickets count
+    public function getUserTicketsCount($id)
+    {
+        $count = Tickets::where('user_id', $id)->count();
+        return $this->ok($count, 'Tickets count fetched');
+    }
+
 
     //Tickets stats according to their status counts like S,A,B,C
     public function ticketStats()

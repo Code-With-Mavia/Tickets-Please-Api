@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Http\Requests\ApiLogoutRequest;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\JWTGuard;
+use App\Http\Resources\UserResource;
 class AuthController extends Controller
 {
     use ApiResponses;
@@ -37,7 +38,7 @@ class AuthController extends Controller
 
         $user = User::create($data);
 
-        return $this->ok($user, 'User registered successfully');
+        return $this->ok(new UserResource($user), 'User registered successfully');
     }
 
     public function logout(ApiLogoutRequest $request)
@@ -56,14 +57,16 @@ class AuthController extends Controller
 
             return $this->ok('Logged out successfully');
 
-        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+        }
+        catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e)
+        {
             return $this->error('Token is already invalid or expired', 401);
 
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e)
+        {
             return $this->error('Failed to logout', 500);
         }
     }
-
-
 
 }

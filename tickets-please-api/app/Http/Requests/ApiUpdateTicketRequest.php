@@ -22,7 +22,6 @@ class ApiUpdateTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_id"=>"required|exists:users,id",
             "title"=> "sometimes|max:128",
             "description"=> "sometimes|max:255 ",
             "status"=> "sometimes|in:S,A,B,C",

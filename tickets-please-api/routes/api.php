@@ -27,32 +27,34 @@ Route::post('logout', [AuthController::class,'logout']);
 Route::middleware(['jwt.auth'])->group(function () {
 
     Route::prefix('tickets')->group(function () {
-
         // GET api/tickets/
         Route::get('/',[TicketsController::class,'index']);
         //GET api/tickets/stats
         Route::get('/stats', [TicketsController::class,'ticketStats']);
          //GET api/tickets/{user_id}
-        Route::get('/{id}', [TicketsController::class,'getticketsbyUser']);
+        Route::get('/{id}', [TicketsController::class,'getUserTickets']);
         // POST api/tickets/
         Route::post('/', [TicketsController::class,'createTicket']);
+        // PUT api/tickets/{id}
+        Route::put('/{id}', [TicketsController::class,'updateTicket']);
         // DELETE api/tickets/{id}
         Route::delete('/{id}', [TicketsController::class,'deleteTicket']);
-
-
     });
 
+    /*optional parameters is always like
+    * Route::get('users/{id?}',[UserController::class,'index']])
+    */
     Route::prefix('users')->group(function () {
-
         // GET api/users/
         Route::get('/',[UserController::class,'index']);
+        // GET api/users/{id}
+        Route::get('/{id}', [UserController::class,'getSingleUser']);
         // GET api/users/stats/{id}
         Route::get('/stats/{id}', [UserController::class,'ticketUserStats']);
         // PUT api/users/
         Route::put('/{id}', [UserController::class,'updateUser']);
         // DELETE api/users/
         Route::delete('/{id}', [UserController::class,'deleteUser']);
-
     });
 
 });
