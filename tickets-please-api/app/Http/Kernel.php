@@ -64,10 +64,9 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'jwt' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
-        'jwt.check' => \Tymon\JWTAuth\Http\Middleware\Check::class,
-        'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
-
+        'jwt' => \Tymon\JWTAuth\Providers\JWT\Lcobucci::class,
+        'jwt.auth' => \Tymon\JWTAuth\Providers\Auth\Illuminate::class,
+        'jwt.storage' => \Tymon\JWTAuth\Providers\Storage\Illuminate::class,
 
     ];
 }

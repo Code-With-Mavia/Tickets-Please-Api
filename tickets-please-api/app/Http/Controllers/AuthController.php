@@ -6,7 +6,9 @@ use App\Traits\ApiResponses;
 use App\Http\Requests\ApiLoginRequest;
 use App\Http\Requests\ApiRegisterRequest;
 use App\Models\User;
+use App\Http\Requests\ApiLogoutRequest;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\JWTGuard;
 class AuthController extends Controller
 {
     use ApiResponses;
@@ -14,7 +16,7 @@ class AuthController extends Controller
     // Login
     public function login(ApiLoginRequest $request)
     {
-        $user = $request->only('email', 'password');
+        $user = $request->validated();
 
         if (!$token = auth()->attempt($user))
         {
@@ -37,6 +39,31 @@ class AuthController extends Controller
 
         return $this->ok($user, 'User registered successfully');
     }
+
+    public function logout(ApiLogoutRequest $request)
+    {
+        try {
+            /** @var JWTGuard $jwt */
+            $jwt = auth('api');
+
+            $token = $jwt->getToken();
+
+            if (!$token) {
+                return $this->error('Token not provided', 400);
+            }
+
+            $jwt->invalidate($token);
+
+            return $this->ok('Logged out successfully');
+
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return $this->error('Token is already invalid or expired', 401);
+
+        } catch (\Exception $e) {
+            return $this->error('Failed to logout', 500);
+        }
+    }
+
 
 
 }

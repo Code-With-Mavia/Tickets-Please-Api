@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ApiCreateTicketRequest;
 use App\Http\Requests\ApiUpdateTicketRequest;
 use App\Models\Tickets;
+
 use App\Traits\ApiResponses;
 class TicketsController extends Controller
 {
     use ApiResponses;
     public function index()
     {
-        $ticket = Tickets::latest()->paginate(100);
+        $ticket = Tickets::select("id","user_id","title","description","status")->paginate(2500);
         return $ticket;
     }
 
@@ -42,5 +43,25 @@ class TicketsController extends Controller
         return $this->ok('Ticket deleted successfully',$deletedTicket);
 
     }
+
+    //filter tickets via user id how many tickets he has
+    public function getticketsbyUser($id)
+    {
+        $tickets = Tickets::select('id','user_id','title','description','status')->where('user_id', $id);
+        return $this->ok("Tickets = ".$tickets->count(),'Tickets fetched');
+
+    }
+
+    //Tickets stats according to their status counts like S,A,B,C
+    public function ticketStats()
+    {
+        $stats = Tickets::select('status')
+        ->selectRaw('COUNT(*) as total')
+        ->groupBy('status')
+        ->get();
+
+        return $this->ok($stats, "Overall ticket stats fetched");
+    }
+
 
 }
