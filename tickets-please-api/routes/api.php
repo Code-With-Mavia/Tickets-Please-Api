@@ -31,12 +31,14 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('/',[TicketsController::class,'index']);
         //GET api/tickets/stats
         Route::get('/stats', [TicketsController::class,'ticketStats']);
-         //GET api/tickets/{user_id}
-        Route::get('/{id}', [TicketsController::class,'getUserTickets'])->name('tickets.show');
+        //GET api/tickets/ticket/{tickets_id}
+        Route::get('/ticket/{id}', [TicketsController::class,'getSingleTicketInfo'])->name('tickets.show');
+        //GET api/tickets/user/{user_id}
+        Route::get('/user/{id}', [TicketsController::class,'getUserTickets']);
         // POST api/tickets/
         Route::post('/', [TicketsController::class,'createTicket']);
-        // PUT api/tickets/{id}
-        Route::put('/{id}', [TicketsController::class,'updateTicket']);
+        // PATCH api/tickets/{id}
+        Route::patch('/{id}', [TicketsController::class,'updateTicket']);
         // DELETE api/tickets/{id}
         Route::delete('/{id}', [TicketsController::class,'deleteTicket']);
     });
@@ -51,10 +53,12 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::get('/{id}', [UserController::class,'getSingleUser'])->name('users.show');
         // GET api/users/stats/{id}
         Route::get('/stats/{id}', [UserController::class,'ticketUserStats']);
-        // PUT api/users/
-        Route::put('/{id}', [UserController::class,'updateUser']);
+        // PATCH api/users/
+        Route::patch('/{id}', [UserController::class,'updateUser'])->name('users.show');
         // DELETE api/users/
         Route::delete('/{id}', [UserController::class,'deleteUser']);
     });
 
 });
+
+?>

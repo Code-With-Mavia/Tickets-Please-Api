@@ -12,9 +12,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = \App\Models\User::factory(100)->create();
+        $users = \App\Models\User::factory(1000)->create();
 
-        \App\Models\Tickets::factory(10000)
+        \App\Models\Tickets::factory(50000)
         ->recycle($users)
         ->create();
         // \App\Models\User::factory()->create([

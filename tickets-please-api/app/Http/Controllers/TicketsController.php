@@ -6,7 +6,7 @@ use App\Http\Requests\ApiUpdateTicketRequest;
 use App\Http\Resources\TicketsResource;
 use App\Models\Tickets;
 use App\Traits\ApiResponses;
-
+use Illuminate\Support\Facades\Cache;
 
 class TicketsController extends Controller
 {
@@ -14,7 +14,11 @@ class TicketsController extends Controller
     // show all tickets
     public function index()
     {
-        $ticket = TicketsResource::collection(Tickets::latest()->paginate(500));
+        $cacheKey = 'tickets_with_users_page';
+        $ticket = Cache::remember($cacheKey, 60, function () {
+            return TicketsResource::collection(Tickets::with('user')->paginate(50));
+
+        });
         return $ticket;
     }
 
@@ -52,9 +56,20 @@ class TicketsController extends Controller
     //filter tickets via user id how many tickets he has
     public function getUserTickets($id)
     {
-        $tickets = Tickets::where('user_id', $id)->select('id','user_id','title','description','status','created_at','updated_at')->get();
-
+        $cacheKey = "ticket_{$id}_user_stats";
+        $tickets = Cache::remember($cacheKey, 60, function () use ($id) {
+        return Tickets::with('user')->where('user_id', $id)->get();
+        });
         return $this->ok(TicketsResource::collection($tickets),'Tickets fetched');
+    }
+    public function getSingleTicketInfo($id)
+    {
+        $tickets = Tickets::find( $id );
+        if(!$tickets)
+        {
+            return $this->error('Ticket not found',404);
+        }
+        return $this->ok(new TicketsResource($tickets),'Ticket Found');
     }
 
 
@@ -69,13 +84,15 @@ class TicketsController extends Controller
     //Tickets stats according to their status counts like S,A,B,C
     public function ticketStats()
     {
-        $stats = Tickets::select('status')
+        $cacheKey = 'tickets_stats_cache';
+        $stats = Cache::remember($cacheKey, 60, function ()  {
+          return Tickets::select('status')
         ->selectRaw('COUNT(*) as total')
         ->groupBy('status')
-        ->get();
-
+        ->get();});
         return $this->ok($stats, "Overall ticket stats fetched");
     }
 
-
 }
+
+?>
