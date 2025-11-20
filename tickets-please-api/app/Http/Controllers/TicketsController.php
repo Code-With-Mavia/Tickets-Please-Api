@@ -7,7 +7,7 @@ use App\Http\Resources\TicketsResource;
 use App\Models\Tickets;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Facades\Cache;
-
+use App\Jobs\TicketEmail;
 class TicketsController extends Controller
 {
     use ApiResponses;
@@ -15,7 +15,8 @@ class TicketsController extends Controller
     public function index()
     {
         $cacheKey = 'tickets_with_users_page';
-        $ticket = Cache::remember($cacheKey, 60, function () {
+        $ticket = Cache::remember($cacheKey, 60, function ()
+        {
             return TicketsResource::collection(Tickets::with('user')->paginate(50));
 
         });
@@ -26,6 +27,8 @@ class TicketsController extends Controller
     public function createTicket(ApiCreateTicketRequest $request)
     {
         $ticket = Tickets::create($request->validated());
+        TicketEmail::dispatch($ticket->user_id, $ticket->id);
+        // TicketEmail::dispatchAfterResponse($ticket->user_id, $ticket->id);
         return $this->ok(new TicketsResource($ticket), "Ticket created successfully");
     }
 
